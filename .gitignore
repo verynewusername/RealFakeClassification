@@ -1,5 +1,5 @@
 
-Dataset/downscaled_gan/.DS_Store
-.DS_Store
+
+*.DS_Store
 *.png
 *.pyc
