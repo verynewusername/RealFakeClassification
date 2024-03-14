@@ -29,7 +29,6 @@ def downscale_and_save(input_dir, output_dir, target_size=(256, 256)):
                 counter += 1
 
 print("specify path")
-return 0
 # Example usage:
 # input_directory = ""
 # output_directory = ""
