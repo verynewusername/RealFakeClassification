@@ -51,6 +51,6 @@ def predict_image(image_path, model):
     return class_label
 
 # Example usage
-image_path = "/Users/efe/Desktop/GAN FACES/archivep1/1m_faces_04_05_06_07/1m_faces_04_05_06_07/1m_faces_05/0CHU0FP0PG.jpg"
+image_path = "/Users/efe/Desktop/fairface-img-margin125-trainval/train/580.jpg"
 predicted_label = predict_image(image_path, model)
 print("Predicted label:", predicted_label)

@@ -1,0 +1,163 @@
+
+out/SD CNN 2024-05-01 21:06:18/model.pth
+Bias Testing Set/Real female
+SD - REAL
+Simple CNN Classifier
+
+
+Real: 551 Fake: 0
+
+out/SD CNN 2024-05-01 21:06:18/model.pth
+Bias Testing Set/RSP_M
+SD - REAL
+Simple CNN Classifier
+
+
+Real: 14 Fake: 986
+
+out/SD CNN 2024-05-01 21:06:18/model.pth
+Bias Testing Set/RV_M
+SD - REAL
+Simple CNN Classifier
+
+
+Real: 12 Fake: 988
+
+out/SD CNN 2024-05-01 21:06:18/model.pth
+Bias Testing Set/RV_F
+SD - REAL
+Simple CNN Classifier
+
+
+Real: 4 Fake: 996
+
+out/SD CNN 2024-05-01 21:06:18/model.pth
+Bias Testing Set/RSP_F
+SD - REAL
+Simple CNN Classifier
+
+
+Real: 4 Fake: 996
+
+out/SD CNN 2024-05-01 21:06:18/model.pth
+Bias Testing Set/Real male
+SD - REAL
+Simple CNN Classifier
+
+
+Real: 449 Fake: 0
+
+out/SD TL 2024-05-01 21:36:39/model.pth
+Bias Testing Set/Real female
+SD - REAL
+Transfer Learning Resnet 18 CNN Classifier
+
+
+Real: 551 Fake: 0
+
+out/SD TL 2024-05-01 21:36:39/model.pth
+Bias Testing Set/RSP_M
+SD - REAL
+Transfer Learning Resnet 18 CNN Classifier
+
+
+Real: 78 Fake: 922
+
+out/SD TL 2024-05-01 21:36:39/model.pth
+Bias Testing Set/RV_M
+SD - REAL
+Transfer Learning Resnet 18 CNN Classifier
+
+
+Real: 74 Fake: 926
+
+out/SD TL 2024-05-01 21:36:39/model.pth
+Bias Testing Set/RV_F
+SD - REAL
+Transfer Learning Resnet 18 CNN Classifier
+
+
+Real: 3 Fake: 997
+
+out/SD TL 2024-05-01 21:36:39/model.pth
+Bias Testing Set/RSP_F
+SD - REAL
+Transfer Learning Resnet 18 CNN Classifier
+
+
+Real: 3 Fake: 997
+
+out/SD TL 2024-05-01 21:36:39/model.pth
+Bias Testing Set/Real male
+SD - REAL
+Transfer Learning Resnet 18 CNN Classifier
+
+
+Real: 449 Fake: 0
+
+out/GAN TL18-2024-03-17 18:34:35/model.pth
+Bias Testing Set/Real female
+GAN - REAL
+Transfer Learning Resnet 18 CNN Classifier
+
+
+Real: 462 Fake: 89
+
+out/GAN TL18-2024-03-17 18:34:35/model.pth
+Bias Testing Set/GAN female
+GAN - REAL
+Transfer Learning Resnet 18 CNN Classifier
+
+
+Real: 84 Fake: 480
+
+out/GAN TL18-2024-03-17 18:34:35/model.pth
+Bias Testing Set/GAN male
+GAN - REAL
+Transfer Learning Resnet 18 CNN Classifier
+
+
+Real: 75 Fake: 361
+
+out/GAN TL18-2024-03-17 18:34:35/model.pth
+Bias Testing Set/Real male
+GAN - REAL
+Transfer Learning Resnet 18 CNN Classifier
+
+
+Real: 384 Fake: 65
+
+out/GAN CNN-1-2024-03-15 04:53:56/model.pth
+Bias Testing Set/Real female
+GAN - REAL
+Simple CNN Classifier
+
+
+Real: 544 Fake: 7
+
+out/GAN CNN-1-2024-03-15 04:53:56/model.pth
+Bias Testing Set/GAN female
+GAN - REAL
+Simple CNN Classifier
+
+
+Real: 19 Fake: 545
+
+out/GAN CNN-1-2024-03-15 04:53:56/model.pth
+Bias Testing Set/GAN male
+GAN - REAL
+Simple CNN Classifier
+
+
+Real: 26 Fake: 410
+
+out/GAN CNN-1-2024-03-15 04:53:56/model.pth
+Bias Testing Set/Real male
+GAN - REAL
+Simple CNN Classifier
+
+
+Real: 447 Fake: 2
+20
+Done!
+Processing time:  00:03:15
