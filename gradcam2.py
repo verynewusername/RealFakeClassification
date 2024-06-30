@@ -4,6 +4,7 @@ from PIL import Image
 import torch.nn as nn
 import matplotlib.pyplot as plt
 import numpy as np
+import torchvision.models as models
 
 # Define the CNN model
 class CNNClassifier(nn.Module):
@@ -26,7 +27,19 @@ class CNNClassifier(nn.Module):
 
 # Load the pre-trained model
 model = CNNClassifier()
-model.load_state_dict(torch.load("/Users/efe/Documents/Github/RealFakeClassification/out/GAN CNN-1-2024-03-15 04:53:56/model.pth"))
+# model.load_state_dict(torch.load("/Users/efe/Documents/Github/RealFakeClassification/out/GAN CNN-1-2024-03-15 04:53:56/model.pth"))
+# model.load_state_dict(torch.load("/Users/efe/Documents/Github/RealFakeClassification/out/SD CNN 2024-05-01 21:06:18/model.pth",map_location=torch.device('cpu')))
+model = models.resnet18(pretrained=True)
+
+# Freeze all the parameters in the pre-trained model
+for param in model.parameters():
+    param.requires_grad = False
+
+# Modify the last fully connected layer to match the number of classes in your problem
+num_ftrs = model.fc.in_features
+model.fc = nn.Linear(num_ftrs, 2)  # 2 classes: fake and real
+
+model.load_state_dict(torch.load("/Users/efe/Documents/Github/RealFakeClassification/out/GAN TL18-2024-03-17 18:34:35/model.pth", map_location=torch.device('cpu')))
 model.eval()
 
 # Define image transformations
@@ -48,53 +61,65 @@ def predict_image(image_path, model):
         outputs = model(image)
         _, predicted = torch.max(outputs, 1)
         class_label = "fake" if predicted.item() == 0 else "real"
-    return class_label
+    return class_label, outputs
 
 # Implement Grad-CAM
 def grad_cam(model, image_path, target_layer):
     image = preprocess_image(image_path)
     image.requires_grad = True
 
-    # Forward pass
+    # Find the target layer
+    target_layer_found = False
+    for name, module in model.named_modules():
+        if name == target_layer:
+            target_layer_module = module
+            target_layer_found = True
+            break
+
+    if not target_layer_found:
+        raise ValueError(f"Target layer '{target_layer}' not found in the model")
+
+    # Forward pass to the target layer
+    x = image
+    for name, module in model.named_children():
+        x = module(x)
+        if name == target_layer:
+            break
+
+    # Save the feature maps
+    feature_maps = x.detach()
+
+    # Forward pass to get predictions
     outputs = model(image)
     _, predicted = torch.max(outputs, 1)
 
     # Zero gradients
     model.zero_grad()
-    
-    # Retain gradients of the feature maps
-    model.feature_maps.retain_grad()
 
-    # Backward pass
-    one_hot_output = torch.zeros(outputs.shape)
+    # Backward pass to get gradients
+    one_hot_output = torch.zeros(outputs.size(), dtype=torch.float32)
     one_hot_output[0][predicted] = 1
     outputs.backward(gradient=one_hot_output)
 
-    # Get the gradients of the target layer
-    gradients = model.feature_maps.grad.data
+    # Get gradients from the target layer module's parameters
+    gradients = target_layer_module.weight.grad
 
-    # Get the feature maps from the target layer
-    feature_maps = model.feature_maps.data
+    # Pool the gradients across the spatial dimensions
+    pooled_gradients = torch.mean(gradients, dim=[2, 3])
 
-    # Pool the gradients across the width and height dimensions
-    weights = torch.mean(gradients, dim=(2, 3))[0, :]
+    # Weighted combination of feature maps and gradients
+    for i in range(feature_maps.size(1)):
+        feature_maps[:, i, :, :] *= pooled_gradients[0, i]
 
-    # Compute the weighted sum of the feature maps
-    grad_cam_map = torch.zeros(feature_maps.shape[2:], dtype=torch.float32)
-    for i, w in enumerate(weights):
-        grad_cam_map += w * feature_maps[0, i, :, :]
+    # Generate heatmap
+    heatmap = torch.mean(feature_maps, dim=1).squeeze()
+    heatmap = np.maximum(heatmap.detach().numpy(), 0)
+    heatmap /= torch.max(heatmap)
 
-    # Apply ReLU to the grad_cam_map
-    grad_cam_map = torch.relu(grad_cam_map)
-
-    # Normalize the grad_cam_map
-    grad_cam_map -= grad_cam_map.min()
-    grad_cam_map /= grad_cam_map.max()
-
-    return grad_cam_map, image
+    return heatmap, image, outputs
 
 # Visualize the Grad-CAM heatmap
-def visualize_grad_cam(grad_cam_map, image_path):
+def visualize_grad_cam(grad_cam_map, image_path, prediction, output):
     image = Image.open(image_path)
     image = image.resize((256, 256))
     image = np.array(image)
@@ -103,8 +128,6 @@ def visualize_grad_cam(grad_cam_map, image_path):
     heatmap = np.uint8(255 * heatmap)
     heatmap = np.transpose(heatmap, (1, 0))
 
-    heatmap = np.uint8(255 * heatmap)
-    heatmap = np.transpose(heatmap, (1, 0))
     heatmap = Image.fromarray(heatmap)
     heatmap = heatmap.resize((image.shape[1], image.shape[0]))
     heatmap = np.array(heatmap)
@@ -121,11 +144,15 @@ def visualize_grad_cam(grad_cam_map, image_path):
     plt.subplot(1, 2, 2)
     plt.imshow(superimposed_img.astype('uint8'))
     plt.title('Grad-CAM')
+    plt.text(10, 30, f'Prediction: {prediction}', color='white', fontsize=12, backgroundcolor='black')
+    # plt.text(10, 50, f'Output: {output[0].detach().numpy()}', color='white', fontsize=12, backgroundcolor='black')
+
+    plt.savefig("gradcam.png")
     plt.show()
 
 # Example usage
-image_path = "/Users/efe/Documents/Github/RealFakeClassification/Dataset/supplementary/real/069003.png"
-
-# image_path = "/Users/efe/Documents/Github/RealFakeClassification/Dataset/supplementary/gan/069052.png"
-grad_cam_map, image = grad_cam(model, image_path, target_layer='conv2')
-visualize_grad_cam(grad_cam_map, image_path)
+image_path = "/Users/efe/Documents/Github/RealFakeClassification/Dataset/supplementary/real/069005.png"
+# image_path = "/Users/efe/Documents/Github/RealFakeClassification/Dataset/supplementary/gan/069054.png"
+prediction, output = predict_image(image_path, model)
+grad_cam_map, image, outputs = grad_cam(model, image_path, target_layer='layer4')
+visualize_grad_cam(grad_cam_map, image_path, prediction, outputs)
