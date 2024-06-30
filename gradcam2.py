@@ -31,7 +31,6 @@ model.eval()
 
 # Define image transformations
 image_transforms = transforms.Compose([
-    transforms.Resize((256, 256)),
     transforms.ToTensor(),           # Convert images to PyTorch tensors
     transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])  # Normalize
 ])

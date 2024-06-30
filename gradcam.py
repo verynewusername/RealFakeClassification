@@ -4,6 +4,7 @@ from PIL import Image
 import torch.nn as nn
 import matplotlib.pyplot as plt
 import numpy as np
+import torchvision.models as models
 
 # Define the CNN model
 class CNNClassifier(nn.Module):
@@ -26,7 +27,11 @@ class CNNClassifier(nn.Module):
 
 # Load the pre-trained model
 model = CNNClassifier()
-model.load_state_dict(torch.load("/Users/efe/Documents/Github/RealFakeClassification/out/GAN CNN-1-2024-03-15 04:53:56/model.pth"))
+# model.load_state_dict(torch.load("/Users/efe/Documents/Github/RealFakeClassification/out/GAN CNN-1-2024-03-15 04:53:56/model.pth"))
+model.load_state_dict(torch.load("/Users/efe/Documents/Github/RealFakeClassification/out/SD CNN 2024-05-01 21:06:18/model.pth",map_location=torch.device('cpu')))
+
+# model = models.resnet18(pretrained=True)
+# model.load_state_dict(torch.load("/Users/efe/Documents/Github/RealFakeClassification/out/GAN TL18-2024-03-17 18:34:35/model.pth",map_location=torch.device('cpu')))
 model.eval()
 
 # Define image transformations

@@ -1,0 +1,70 @@
+digraph {
+	graph [size="12,12"]
+	node [align=left fontname=monospace fontsize=10 height=0.2 ranksep=0.1 shape=box style=filled]
+	5398909712 [label="
+ (1, 2)" fillcolor=darkolivegreen1]
+	5398943040 [label=AddmmBackward0]
+	5398942896 -> 5398943040
+	5398909136 [label="fc2.bias
+ (2)" fillcolor=lightblue]
+	5398909136 -> 5398942896
+	5398942896 [label=AccumulateGrad]
+	5398942848 -> 5398943040
+	5398942848 [label=ReluBackward0]
+	5398942752 -> 5398942848
+	5398942752 [label=AddmmBackward0]
+	5398942608 -> 5398942752
+	5398908944 [label="fc1.bias
+ (128)" fillcolor=lightblue]
+	5398908944 -> 5398942608
+	5398942608 [label=AccumulateGrad]
+	5398942656 -> 5398942752
+	5398942656 [label=ViewBackward0]
+	5398942368 -> 5398942656
+	5398942368 [label=MaxPool2DWithIndicesBackward0]
+	5398942176 -> 5398942368
+	5398942176 [label=ReluBackward0]
+	5398942080 -> 5398942176
+	5398942080 [label=ConvolutionBackward0]
+	5398941888 -> 5398942080
+	5398941888 [label=MaxPool2DWithIndicesBackward0]
+	5398941648 -> 5398941888
+	5398941648 [label=ReluBackward0]
+	5398941504 -> 5398941648
+	5398941504 [label=ConvolutionBackward0]
+	5398943616 -> 5398941504
+	5398908464 [label="conv1.weight
+ (32, 3, 3, 3)" fillcolor=lightblue]
+	5398908464 -> 5398943616
+	5398943616 [label=AccumulateGrad]
+	5398943568 -> 5398941504
+	5398908560 [label="conv1.bias
+ (32)" fillcolor=lightblue]
+	5398908560 -> 5398943568
+	5398943568 [label=AccumulateGrad]
+	5398941936 -> 5398942080
+	5398908656 [label="conv2.weight
+ (64, 32, 3, 3)" fillcolor=lightblue]
+	5398908656 -> 5398941936
+	5398941936 [label=AccumulateGrad]
+	5398942272 -> 5398942080
+	5398908752 [label="conv2.bias
+ (64)" fillcolor=lightblue]
+	5398908752 -> 5398942272
+	5398942272 [label=AccumulateGrad]
+	5398942704 -> 5398942752
+	5398942704 [label=TBackward0]
+	5398942128 -> 5398942704
+	5398908848 [label="fc1.weight
+ (128, 262144)" fillcolor=lightblue]
+	5398908848 -> 5398942128
+	5398942128 [label=AccumulateGrad]
+	5398942800 -> 5398943040
+	5398942800 [label=TBackward0]
+	5398942224 -> 5398942800
+	5398909040 [label="fc2.weight
+ (2, 128)" fillcolor=lightblue]
+	5398909040 -> 5398942224
+	5398942224 [label=AccumulateGrad]
+	5398943040 -> 5398909712
+}

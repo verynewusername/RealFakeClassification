@@ -4,3 +4,7 @@ out/*
 *.png
 *.pyc
 *.pth
+External Datasets for Bias Testing/fairface-img-margin125-trainval/train/*.jpg
+External Datasets for Bias Testing/fairface-img-margin125-trainval/val/*.jpg
+External Datasets for Bias Testing/fairface-img-margin125-trainval/notusedval/*.jpg
+cnn_model.onnx

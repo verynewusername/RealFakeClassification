@@ -9,6 +9,11 @@ from torchvision import transforms
 import torch
 import torch.nn as nn
 import torchvision.models as models
+import pandas as pd
+import matplotlib.pyplot as plt
+from collections import defaultdict
+from tqdm import tqdm
+
 
 # Define the CNN model ---- Taken from the training script
 class CNNClassifier(nn.Module):
@@ -63,11 +68,82 @@ def get_file_names(folder_path):
                 items.append(item_path)
     return items
 
-def perform_tests(model_path, directory, info):
+def getLabels(image_path, df):
+
+    temp = image_path.split('/')[-2:]
+    temp = '/'.join(temp)
+
+    label_to_lookup = temp
+    result = df[df['file'] == label_to_lookup]
+
+    # Check if there's any result
+    if not result.empty:
+        age = result['age'].iloc[0]
+        gender = result['gender'].iloc[0]
+        race = result['race'].iloc[0]
+        return age, gender, race
+    else:
+        raise ValueError("No row found for label:", label_to_lookup)
+
+# Function to plot stacked bar chart with extra space for title
+def plot_stacked_bar(data, title, dir):
+    # Ensure data is split correctly into categories and types
+    categories = sorted(set(k.rsplit('_', 1)[0] for k in data.keys()))
+    
+    correct = [data.get(f"{category}_correct", 0) for category in categories]
+    incorrect = [data.get(f"{category}_incorrect", 0) for category in categories]
+
+    # Calculate total counts and proportions
+    total = [c + i for c, i in zip(correct, incorrect)]
+    correct_proportion = [c / t if t != 0 else 0 for c, t in zip(correct, total)]
+    incorrect_proportion = [i / t if t != 0 else 0 for i, t in zip(incorrect, total)]
+
+    # Create stacked bar chart
+    barWidth = 0.5
+    plt.bar(categories, correct_proportion, color='yellow', edgecolor='grey', width=barWidth, label='Correct')
+    plt.bar(categories, incorrect_proportion, bottom=correct_proportion, color='red', edgecolor='grey', width=barWidth, label='Incorrect')
+
+    plt.xlabel('Category')
+    plt.ylabel('Proportion')
+    plt.title(title, pad=20)  # Increase pad value to allocate more space for the title
+    if "race" in title.lower() or "age" in title.lower():
+        plt.xticks(rotation=45, ha='right')  # Rotate x-axis labels
+    plt.legend()
+
+    plt.tight_layout()  # Adjust layout to prevent clipping
+    
+    # Create directory if it doesn't exist
+    dir = dir.replace("\n", " ")
+    save_dir = f"BiasCharts/{dir}"
+    os.makedirs(save_dir, exist_ok=True)
+    
+    name = ""
+
+    # If "age" in title, plot age histogram
+    if "age" in title.lower():
+        name = "Age"
+
+    # If "gender" in title, plot gender histogram
+    elif "gender" in title.lower():
+        name = "Gender"
+
+    # If "race" in title, plot race histogram
+    elif "race" in title.lower():
+        name = "Race"
+
+    # Save the figure
+    plt.savefig(f"{save_dir}/{name}.png")
+    # plt.show()
+
+    # Clear the plot
+    plt.clf()
+
+def perform_tests(model_path, directory, info, dfInput):
     print()
     temp = model_path + "\n" + directory + "\n" + info
     print(temp)
     print()
+    print(info)
 
     model = None
 
@@ -94,22 +170,64 @@ def perform_tests(model_path, directory, info):
 
     images = get_file_names(directory)
 
-    realCount = 0
-    fakeCount = 0
+    print("This script will assume that all images are REAL")
 
-    for image in images:
+    # Define defaultdicts for each histogram
+    hist_gender = defaultdict(int)
+    hist_age = defaultdict(int)
+    hist_race = defaultdict(int)
+
+    # till = 200
+
+    for image in tqdm(images, desc="Processing images"):
+        # till -= 1
+        # if till == 0:
+        #     break
+        age, gender, race = getLabels(image, df=dfInput)
         predicted_label = predict_image(image, model)
-        # print(image, predicted_label)
+
+        # Increment counts based on predicted label and demographics
         if predicted_label == "real":
-            realCount += 1
+            hist_gender[f"{gender}_correct"] += 1
+            hist_age[f"{age}_correct"] += 1
+            hist_race[f"{race}_correct"] += 1
         elif predicted_label == "fake":
-            fakeCount += 1
+            hist_gender[f"{gender}_incorrect"] += 1
+            hist_age[f"{age}_incorrect"] += 1
+            hist_race[f"{race}_incorrect"] += 1
         else:
             raise ValueError("Invalid predicted label:", predicted_label)
 
-    print("Real:", realCount, "Fake:", fakeCount)
+    # Plotting the data
+    plot_stacked_bar(hist_gender, info + "Gender", info)
+    plot_stacked_bar(hist_age, info + "Age", info)
+    plot_stacked_bar(hist_race, info + "Race", info)
 
-    return realCount, fakeCount
+
+    # Save the data to text file
+    dir = info.replace("\n", " ")
+    with open(f"BiasCharts/{dir}.txt", "w") as file:
+        file.write(str(hist_gender) + "\n")
+        file.write(str(hist_age) + "\n")
+        file.write(str(hist_race) + "\n")
+
+
+    # # Make a histogram on matplotlib
+    # plt.bar(hist_gender.keys(), hist_gender.values())
+    # plt.title("Gender")
+    # plt.show()
+
+    # plt.bar(hist_age.keys(), hist_age.values())
+    # plt.title("Age")
+    # plt.show()
+
+    # plt.bar(hist_race.keys(), hist_race.values())
+    # plt.title("Race")
+    # plt.show()
+
+
+
+    return hist_gender, hist_age, hist_race
 
 def isGANRelated(dir_name):
     if (dir_name == "GAN female"
@@ -131,7 +249,8 @@ def isSDRelated(dir_name):
 
 def main():
     file_names = get_file_names("out")
-    sets = get_file_names("Bias Testing Set")
+    # sets = get_file_names("Bias Testing Set")
+    sets = ["External Datasets for Bias Testing/fairface-img-margin125-trainval/train"]
     # print(file_names)
     # print()
     count = 0
@@ -151,9 +270,11 @@ def main():
                 rest = set_directory.split("/", 1)[-1]  # Split the string by "/", and take the last part
                 # print(rest)  # Output will be "rest"
 
-                if lines[1].strip() == "SD - REAL" and isSDRelated(rest) or lines[1].strip() == "GAN - REAL" and isGANRelated(rest):
-                    perform_tests(model, set_directory, info)
-                    count += 1
+                # if lines[1].strip() == "SD - REAL" and isSDRelated(rest) or lines[1].strip() == "GAN - REAL" and isGANRelated(rest):
+                df = pd.read_csv("External Datasets for Bias Testing/fairface_label_train.csv")
+                perform_tests(model, set_directory, info, df)
+                count += 1
+                print("=" * 20)
     print(count)
 
 

@@ -1,0 +1,2 @@
+proportion_correct_male,proportion_correct_female,proportion_incorrect_male,proportion_incorrect_female,test_statistic_correct,p_value_correct,test_statistic_incorrect,p_value_incorrect
+0.994041664854521,0.9945286814858433,0.005958335145479059,0.00547131851415673,-0.9484895962070046,0.34288026672377914,0.9484895962069959,0.34288026672378336

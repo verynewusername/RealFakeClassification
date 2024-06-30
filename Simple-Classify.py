@@ -19,6 +19,7 @@ from matplotlib import pyplot as plt
 import datetime
 from torchviz import make_dot
 from torchsummary import summary
+
 # ======================= PYTHON SETTINGS ======================= #
 # =======================   GPU or CPU    ======================= #
 device = torch.device("cpu")
@@ -151,7 +152,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # Define training function with early stopping and loss tracking
-def train_model(model, criterion, optimizer, train_loader, val_loader, num_epochs=10, patience=3):
+def train_model(model, criterion, optimizer, train_loader, val_loader, num_epochs=20, patience=3):
     train_losses = []
     val_losses = []
     best_val_loss = float('inf')
@@ -216,7 +217,7 @@ def train_model(model, criterion, optimizer, train_loader, val_loader, num_epoch
     return train_losses, val_losses
 
 # Train the model
-train_losses, val_losses = train_model(model, criterion, optimizer, train_loader, val_loader, num_epochs=20)
+train_losses, val_losses = train_model(model, criterion, optimizer, train_loader, val_loader, 20)
 
 
 # Plot the training and validation losses

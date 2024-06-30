@@ -128,7 +128,7 @@ class CNNClassifier(nn.Module):
         return x
 
 # Define training function with transfer learning
-def train_model_with_transfer_learning(backbone, criterion, optimizer, train_loader, val_loader, num_epochs=10, patience=3):
+def train_model_with_transfer_learning(backbone, criterion, optimizer, train_loader, val_loader, num_epochs=20, patience=3):
     train_losses = []
     val_losses = []
     best_val_loss = float('inf')
@@ -206,7 +206,7 @@ optimizer = optim.Adam(model.parameters(), lr=0.001)
 # Define data loaders (Assuming train_loader and val_loader are already defined)
 
 # Train the model with transfer learning
-train_losses, val_losses =  train_model_with_transfer_learning(model, criterion, optimizer, train_loader, val_loader, num_epochs=20)
+train_losses, val_losses =  train_model_with_transfer_learning(model, criterion, optimizer, train_loader, val_loader, 20)
 
 # Plot the training and validation losses
 plt.figure(figsize=(10, 5))
