@@ -29,10 +29,10 @@ class CNNClassifier(nn.Module):
 # Load the pre-trained model
 model = CNNClassifier()
 # model.load_state_dict(torch.load("/Users/efe/Documents/Github/RealFakeClassification/out/GAN CNN-1-2024-03-15 04:53:56/model.pth"))
-# model.load_state_dict(torch.load("/Users/efe/Documents/Github/RealFakeClassification/out/SD CNN 2024-05-01 21:06:18/model.pth",map_location=torch.device('cpu')))
+model.load_state_dict(torch.load("/Users/efe/Documents/Github/RealFakeClassification/out/SD CNN 2024-05-01 21:06:18/model.pth",map_location=torch.device('cpu')))
 
-model = models.resnet18(pretrained=True)
-model.load_state_dict(torch.load("/Users/efe/Documents/Github/RealFakeClassification/out/GAN TL18-2024-03-17 18:34:35/model.pth",map_location=torch.device('cpu')))
+# model = models.resnet18(pretrained=True)
+# model.load_state_dict(torch.load("/Users/efe/Documents/Github/RealFakeClassification/out/GAN TL18-2024-03-17 18:34:35/model.pth",map_location=torch.device('cpu')))
 model.eval()
 
 # Define image transformations
@@ -130,6 +130,9 @@ def visualize_grad_cam(grad_cam_map, image_path, prediction, output):
     plt.title('Grad-CAM')
     plt.text(10, 30, f'Prediction: {prediction}', color='white', fontsize=12, backgroundcolor='black')
     # plt.text(10, 50, f'Output: {output[0].detach().numpy()}', color='white', fontsize=12, backgroundcolor='black')
+
+    plt.colorbar(plt.cm.ScalarMappable(cmap='viridis'), ax=plt.gca(), orientation='vertical', fraction=0.046, pad=0.04)
+
 
     plt.savefig("gradcam.png")
     plt.show()
