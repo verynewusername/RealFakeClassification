@@ -1,5 +1,3 @@
-Sure! Here is a sample README file for your project:
-
 # RealFakeClassification
 
 Code used in my Bachelor Thesis.
@@ -31,29 +29,15 @@ pip install -r requirements.txt
 To train the model, run:
 
 ```bash
-python src/train.py --config configs/train_config.yaml
+python src/train.py
 ```
 
 To evaluate the model, run:
 
 ```bash
-python src/evaluate.py --config configs/evaluate_config.yaml
+python src/evaluate.py
 ```
 
 ## Results
 
 The results of the classification models are stored in the `results/` directory. Detailed evaluation metrics and visualizations can be found in the notebooks within the `notebooks/` directory.
-
-## Contributions
-
-Contributions are welcome! Please open an issue or submit a pull request if you have any improvements or bug fixes.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-For any questions or inquiries, please contact [your email].
-
-Feel free to customize this README as per your project's requirements.
